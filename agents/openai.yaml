@@ -1,0 +1,4 @@
+interface:
+  display_name: "larouter-image-generation"
+  short_description: "Generate and edit images through LaRouter"
+  default_prompt: "Use $larouter-image-generation for image generation or editing through LaRouter."
