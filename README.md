@@ -1,4 +1,14 @@
-# LaRouter Image Generation Skill
+<div align="center">
+  <img src="assets/lapage-logo.svg" alt="LaPage" width="112" />
+  <h1>LaRouter Image Generation Skill</h1>
+  <p>OpenAI-compatible image generation and editing through LaRouter.</p>
+</div>
+
+<p align="center">
+  <a href="https://github.com/zhuylanz/larouter-image-generation-skill">GitHub Repository</a>
+  ·
+  <a href="https://lapage.vn">LaPage Digital</a>
+</p>
 
 Use this skill to generate and edit images through LaRouter's OpenAI-compatible
 image endpoints from Codex and other AI agents.
@@ -51,8 +61,14 @@ The skill never prints or stores credentials. If the environment variable is
 unset, it can use the `experimental_bearer_token` from `~/.codex/config.toml`
 for the request only.
 
+## About LaPage Digital
+
+LaPage Digital builds practical digital systems for growing businesses,
+including websites, content platforms, automation, and AI-enabled operations.
+This skill packages a predictable LaRouter workflow for those environments.
+
 ## License
 
-This repository contains LaRouter integration guidance for LaPage workflows.
-Contact LaPage Digital before redistributing or adapting it for another
-organization.
+This repository contains LaPage Digital workflow guidance for LaRouter image
+operations. Contact LaPage Digital before redistributing or adapting it for
+another organization.
