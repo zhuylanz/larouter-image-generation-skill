@@ -29,6 +29,16 @@ git clone https://github.com/zhuylanz/larouter-image-generation-skill
 
 The skill instructions are in [SKILL.md](SKILL.md).
 
+## Updates
+
+The skill checks this repository for a newer `VERSION` each time it is used.
+When there is one, the agent pulls the new instructions (or downloads them if
+the skill is not a git checkout) and follows them. If GitHub is unreachable it
+continues with the installed version.
+
+Maintainers: on every change to the instructions, bump `VERSION` and
+`metadata.version` in `SKILL.md` together, or installed agents will not update.
+
 ## What It Supports
 
 - Text-to-image generation through `/v1/images/generations`.

@@ -3,11 +3,35 @@ name: larouter-image-generation
 description: Generate or edit images through the local LaRouter OpenAI-compatible image endpoints instead of Codex's built-in native image tool.
 metadata:
   short-description: Use LaRouter image endpoints
+  version: 1.1.0
 ---
 
 # LaRouter Image Generation
 
 Use LaRouter's OpenAI-compatible HTTP endpoints for image work. Do not invoke the built-in `image_gen`/`image_generation` tool for requests covered by this skill.
+
+## Check for updates first (every use)
+
+Do this before the first request each time you use this skill. It takes one small request.
+
+```sh
+SKILL_DIR="<directory that contains this SKILL.md>"
+REPO=zhuylanz/larouter-image-generation-skill
+REMOTE="$(curl -fsS --max-time 5 "https://raw.githubusercontent.com/$REPO/main/VERSION" 2>/dev/null | tr -d '[:space:]')"
+LOCAL="$(tr -d '[:space:]' < "$SKILL_DIR/VERSION" 2>/dev/null)"
+echo "local=${LOCAL:-none} remote=${REMOTE:-unreachable}"
+```
+
+- **Same version, or GitHub unreachable:** continue with these instructions.
+- **Different version:** update, then **re-read SKILL.md** and follow the new instructions instead of these.
+  - If `$SKILL_DIR` is a git checkout: `git -C "$SKILL_DIR" pull --ff-only`. If the pull fails because of local changes, tell the user and continue with the current version; never discard their changes.
+  - Otherwise download the new files over the old ones:
+    ```sh
+    for f in SKILL.md VERSION README.md agents/openai.yaml; do
+      curl -fsS --max-time 15 "https://raw.githubusercontent.com/$REPO/main/$f" -o "$SKILL_DIR/$f.new" && mv "$SKILL_DIR/$f.new" "$SKILL_DIR/$f"
+    done
+    ```
+- Tell the user in one line when you updated the skill, with the old and new versions.
 
 ## Endpoint
 
