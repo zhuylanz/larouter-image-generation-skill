@@ -3,7 +3,7 @@ name: larouter-image-generation
 description: Generate or edit images through the local LaRouter OpenAI-compatible image endpoints instead of Codex's built-in native image tool.
 metadata:
   short-description: Use LaRouter image endpoints
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # LaRouter Image Generation
@@ -42,15 +42,24 @@ echo "local=${LOCAL:-none} remote=${REMOTE:-unreachable}"
 - Prefer `model: "codex/gpt-image-2"` when using the configured ChatGPT/Codex account. Other supported Codex image models include `codex/gpt-image-1.5`, `codex/gpt-image-2.5`, `codex/gpt-image-2.5-flare`, and `codex/gpt-image-2.5-sunburst`.
 - Use the `codex/` prefix when selecting a Codex-backed image model through LaRouter. The `multiImage` capability applies to edits, not text-only generation.
 
-Authentication: use `$LAROUTER_API_KEY` when it is already set. If it is unset, read the `experimental_bearer_token` value from `~/.codex/config.toml` and use it only in the request. Never print or store the key in prompts, logs, or generated artifacts. For image output, decode `data[0].b64_json` and save it as a local file when the user requests a file.
+Authentication: use `$LAROUTER_API_KEY` when it is already set. If it is unset, read the `experimental_bearer_token` value from `~/.codex/config.toml` (Codex), then the `ANTHROPIC_AUTH_TOKEN` that LaRouter's Claude Code setup puts in the environment and `~/.claude/settings.json` (only when the base URL is `i-larouter.lapage.vn`), and use it only in the request. Never print or store the key in prompts, logs, or generated artifacts. For image output, decode `data[0].b64_json` and save it as a local file when the user requests a file.
 
 ```sh
 if [ -z "${LAROUTER_API_KEY:-}" ] && [ -f "$HOME/.codex/config.toml" ]; then
-  LAROUTER_API_KEY="$(sed -n 's/^experimental_bearer_token = "\\([^"]*\\)"/\\1/p' "$HOME/.codex/config.toml" | head -1)"
+  LAROUTER_API_KEY="$(sed -n 's/^experimental_bearer_token = "\([^"]*\)"/\1/p' "$HOME/.codex/config.toml" | head -1)"
+fi
+# Claude Code set up with LaRouter keeps the key as ANTHROPIC_AUTH_TOKEN.
+if [ -z "${LAROUTER_API_KEY:-}" ]; then
+  case "${ANTHROPIC_BASE_URL:-}" in
+    *i-larouter.lapage.vn*) LAROUTER_API_KEY="${ANTHROPIC_AUTH_TOKEN:-}" ;;
+  esac
+fi
+if [ -z "${LAROUTER_API_KEY:-}" ] && grep -qs 'i-larouter\.lapage\.vn' "$HOME/.claude/settings.json"; then
+  LAROUTER_API_KEY="$(sed -n 's/.*"ANTHROPIC_AUTH_TOKEN"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$HOME/.claude/settings.json" | head -1)"
 fi
 ```
 
-If the endpoint returns `401` and no key is available from either location, report the authentication error without exposing any token.
+If the endpoint returns `401` and no key is available from any of these places, report the authentication error without exposing any token.
 
 If the endpoint returns an error, report the HTTP status and response message verbatim. Retry transient `502`/`503` responses once after a short delay; do not reinterpret them as entitlement failures.
 
